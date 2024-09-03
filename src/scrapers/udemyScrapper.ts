@@ -4,8 +4,10 @@ import { logger } from "../utils/logger";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import {  CaptchaType } from "../enums/captchaType";
 import { Udemy } from "../types/udemy";
+import { Page } from "puppeteer";
+import { Category } from "../types/category";
 
-// Função para scrapear a Udemy
+// scrapping udemy
 export async function scrapeUdemyCourses( searchTerm: string ): Promise<Course[]> {
 
   logger.info(`Iniciando scraping para Udemy com o termo: ${searchTerm}`);
@@ -33,7 +35,7 @@ export async function scrapeUdemyCourses( searchTerm: string ): Promise<Course[]
       "--disable-web-security",
       "--disable-features=IsolateOrigins,site-per-process",
       "--ignore-certificate-errors",
-      "--window-size=1080,1900", // Define o tamanho da janela para uma melhor renderização
+      "--window-size=1080,1900",
     ],
   });
 
@@ -44,7 +46,7 @@ export async function scrapeUdemyCourses( searchTerm: string ): Promise<Course[]
   }
   while (scrapedData?.length <= 1 || scrapedData == null) {
     try {
-      // Defina cabeçalhos HTTP para simular um navegador real
+      //Set HTTP headers to simulate a real browser
       await page.setExtraHTTPHeaders({
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -53,17 +55,14 @@ export async function scrapeUdemyCourses( searchTerm: string ): Promise<Course[]
 
       const baseUrl = "https://www.udemy.com";
 
-      // Vá até a página principal para pegar todas as categorias
       await page.goto(`${baseUrl}/`, { waitUntil: "networkidle2" });
 
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
 
-      // Simule interações humanas para evitar a detecção de bots
-      //Função para esperar por um determinado tempo (em milissegundos)
+      // Simulate human interactions to avoid bot detection
+      //Function to wait for a certain time (in milliseconds)
      
-
-      // Em seu código principal
-      await delay(Math.random() * 2000 + 1000); // Espera aleatória entre 1s e 3s // Espera aleatória entre 1s e 3s
+      await delay(Math.random() * 2000 + 1000); //  Random wait between 1s and 3s // Random wait between 1s and 3s
 
       await page.setCacheEnabled(true);
 
@@ -133,265 +132,276 @@ export async function scrapeUdemyCourses( searchTerm: string ): Promise<Course[]
             }
         });
            
-        
       }
-
       
-
-
-       /* const shadowHostSelector = 'body > div > div > div > div > div > div';
-        const iframeSelector = 'iframe';
-
-        const shadowHost = await page.waitForSelector(shadowHostSelector);
-        console.log(shadowHost)
-         // Acessa o Shadow Root do shadow host
-          // Tentar acessar o Shadow Root
-        const shadowRootHandle = await shadowHost!.evaluateHandle((shadowHost) => {
-          // Verifique se o shadowRoot está acessível
-          console.log(shadowHost.shadowRoot)
-          debugger
-          return shadowHost.shadowRoot ? shadowHost.shadowRoot : null;
-        });
-        console.log(shadowRootHandle)*/
-        // Dentro do Shadow Root, encontra o iframe
-       /* const iframeHandle  = await page.evaluateHandle((shadowHostSelector, iframeSelector) => {
-          const shadowHost = document.querySelector(shadowHostSelector);
-          debugger
-          if (!shadowHost || !shadowHost.shadowRoot) return null;
-          const shadowRoot = shadowHost.shadowRoot;
-          const iframe = shadowRoot.querySelector(iframeSelector) as HTMLIFrameElement;
-          debugger
-          if (iframe) {
-            return {iframe, shadowHost}; // Retorna o contentWindow do iframe
-          }
-          return null;
-        }, shadowHostSelector, iframeSelector);
-
-        debugger
-
-        if (!iframeHandle) {
-          console.error('Iframe não encontrado dentro do Shadow DOM');
-          debugger
-        }
-        else
-        {
-          debugger
-          console.log("found iframe")
-        }
-
-        const elementHandle =  iframeHandle.asElement(); // Usa contentFrame() para acessar o conteúdo do iframe
-        if (!elementHandle) {
-          console.error('Não foi possível acessar o conteúdo do iframe');
-          
-        }
-        const frame = await elementHandle!.contentFrame();
-      
-        //#document > html > body > shadow root closed> div> div  > div > div > label >input
-
-        debugger
-*/
-      
-
-      
-      //await page.goto(`${baseUrl}/courses/`, { waitUntil: "networkidle2" });
-   
-     
-      //const content = await page.content();
-      // console.log(content);
-
-      //if we get cloudfare 
-     
-
-      // get all categories
-      const categories = await page.evaluate(() => {
-        const categoriesElements = document.querySelectorAll(
-          '[class*="list-menu-module"]'
-        );
-        const categoriesData: any[] = [];
-        categoriesElements.forEach((categoriesElement) => {
-
-          const anchorEl = categoriesElement as HTMLAnchorElement;
-
-          if (!anchorEl.href) return;
-          categoriesData.push({
-            name: anchorEl.textContent?.trim(),
-            url: anchorEl?.href,
-          });
-
-        });
-        return categoriesData;
-      });
-
-      let indexPage = 0;
-      let nextLink: string;
-      
-      //loop throu all categories
-      for (const categorie of categories) {
-        let nextPage = false;
-        nextLink = categorie.url;
-        console.log(categorie.url)
-
-        while (nextLink != null || nextLink != "") {
-          console.log(nextLink);
-          await page.goto(nextLink, { waitUntil: "networkidle2" });
-
-          // Aguarda os elementos dos cursos aparecerem na página
-          await page.waitForFunction(() => {
-            return !!document.querySelector('[class*="popper-module--popper"]') ||  !!document.querySelector('class*="pagination-module--next"'); }, { timeout: 1000000 }); 
-
-          // Scraping dos dados dos cursos
-          let { courseData, nextLink_ } = await page.evaluate(() => {
-            //const courseElements = document.querySelectorAll('.popper-module--popper--mM5Ie');
-            const courseElements = document.querySelectorAll('[class*="popper-module--popper"]');
-            const courseData: any[] = [];
-            
-            for (const courseElement of Array.from(courseElements)) {
-
-
-              if (courseElement.closest('[class*="carousel-module--container"]')) {
-                continue; // Pula o loop se estiver dentro de "tab-container" ou carousel
-              }
-
-              //get title
-              const titleElement = courseElement.querySelector('h3[data-purpose="course-title-url"] a');
-              if (titleElement == undefined) continue;
-              const title = titleElement ? titleElement.childNodes[0].textContent?.trim() : null;
-              const link = titleElement  ? `https://www.udemy.com${titleElement.getAttribute("href")}` : null;
-
-
-              //get description
-              const descriptionElement = courseElement.querySelector('[class*="course-card-module--course-headline"]');
-              const description = descriptionElement?.textContent?.trim();
-
-              //get rating
-              const ratingWrapper = courseElement.querySelector('[class*="star-rating-module"] [data-purpose="rating-number"]');
-              const rating = ratingWrapper ? parseFloat(ratingWrapper.textContent || "0"): 0;
-
-              //get max possible rating
-              const ratingMaxwrapper = courseElement.querySelector('[class*="star-rating-module"] [class*="ud-sr-only"]');
-              let ratingMax = 0;
-              if (ratingMaxwrapper) {
-                const ratingMaxText = ratingMaxwrapper.textContent?.trim(); // Obtém o texto e remove espaços extras
-
-                if (ratingMaxText) {
-                  const lastNumber = ratingMaxText.match(/\d+$/); // Extrai o último número da string
-
-                  if (lastNumber) {
-                    ratingMax = parseInt(lastNumber[0]); // Mostra o último número encontrado
-                  }
-                }
-              }
-
-              //get price
-              const priceElement = courseElement.querySelector('[data-purpose*="course-price-text"]')?.childNodes[1].childNodes[0];
-              const priceInfo = priceElement? priceElement.textContent?.trim(): null;
-              let price = 0;
-              let currency = "";
-              if (priceInfo) {
-                // Expressão regular para capturar o valor numérico e a moeda
-                const match = priceInfo.match(/([^\d.,]+)?([\d.,]+)/);
-                if (match) {
-                  currency = match[1]?.trim() || ""; // O símbolo da moeda
-                  price = parseFloat(match[2].replace(",", ".")); // O valor numérico
-                }
-              }
-
-              //get authors
-              const authorsElement = courseElement.querySelector('[class*="course-card-instructors-module--instructor-list"]');
-              const authors = authorsElement?.textContent?.trim();
-
-              //number reviews
-              const numberReviewsElement = courseElement.querySelector('[class*="course-card-ratings-module--reviews-text"]');
-              const numberReviewsInfo =numberReviewsElement?.textContent?.trim();
-              let numberReviews = "";
-
-              if (numberReviewsInfo) {
-                const match = numberReviewsInfo.match(/([\d.,]+)/);
-                if (match) {
-                  numberReviews = match[1];
-                }
-              }
-
-              //card details= total hours, classes, levels
-              const cardInfoElement = courseElement.querySelector('[data-purpose*="course-meta-info"]');
-              const totalHours =
-                cardInfoElement?.childNodes[0]?.textContent?.trim();
-              const classes = cardInfoElement?.childNodes[1]?.textContent?.trim();
-              const level = cardInfoElement?.childNodes[2]?.textContent?.trim();
-
-              courseData.push({
-                title,
-                link,
-                rating,
-                ratingMax,
-                price,
-                currency,
-                description,
-                authors,
-                numberReviews,
-                totalHours,
-                classes,
-                level,
-              });
-            }
-
-            const buttonNextPage = document.querySelector('[class*="pagination-module--next"]') as HTMLAnchorElement;
-            let nextLink_ = "";
-           
-            if (buttonNextPage) {
-              nextPage = true;
-              console.log(buttonNextPage.href as string);
-              nextLink_ = buttonNextPage.href as string;
-            } else 
-            {
-              console.log("button "+ buttonNextPage);
-              debugger
-              nextLink_ = "";
-
-            }
-          //  console.log(courseData);
-            return { courseData, nextLink_ };
-          });
-
-          nextLink = nextLink_;
-          scrapedData.push(...courseData);
-
-         // console.log(scrapedData)
-        }
-      }
-
-      //data-purpose="tab-container"
+      let categories = await getAllCategories(page);
+      //categories = await getMaxpagesCategories(page, categories);
+      scrapedData = await getAllCoursesByCategory(page, categories, scrapedData);
 
       console.log("ola " + scrapedData.length);
 
-      // Processar os dados e adicionar ao array de cursos
-      scrapedData.forEach((data: any) => {
-        if (data.title && data.link) {
-          courses.push({
-            title: data.title,
-            link: data.link,
-            rating: data.rating,
-            maxRating: data.ratingMax,
-            price: data.price || "Free",
-            currency: data.currency,
-            description: data.description,
-            authors: data.authors,
-            numberReviews: data.numberReviews,
-            totalHours: data.totalHours,
-            classes: data.classes,
-            level: data.level,
-          });
-        }
-      });
-
-      logger.info(`Scraping completo. ${courses.length} cursos encontrados.`);
+      logger.info(`Scraping completo. ${scrapedData.length} cursos encontrados.`);
     } catch (error: any) {
       logger.error(`Erro ao scrapear a Udemy: ${error.message}`);
       logger.error(error)
     } finally {
-      // await browser.close();
+       await browser.close();
     }
   }
   await browser.close();
-  return courses;
+  return scrapedData;
+}
+
+//get all categories
+async function getAllCategories(page:Page):Promise<Category[]> {
+
+  const categories = await page.evaluate(() => {
+    const categoriesElements = document.querySelectorAll(
+      '[class*="list-menu-module"]'
+    );
+    const categoriesData: Category[] = [];
+    categoriesElements.forEach((categoriesElement) => {
+
+      const anchorEl = categoriesElement as HTMLAnchorElement;
+
+      if (!anchorEl.href) return;
+      categoriesData.push({
+        name: anchorEl.textContent?.trim() as string,
+        url: anchorEl?.href,
+        currentPage:0,
+        maxPage:0,
+      });
+
+    });
+    return categoriesData;
+  });
+  return categories
+}
+
+// get all categories
+async function getAllCoursesByCategory(page:Page, categories:Category[], scrapedData :any[]): Promise<any[]> {
+
+  
+  try {
+    let nextLink: string;
+    //loop throu all categories
+    for (const category of categories) {
+      nextLink = category.url;
+      console.log(category.url)
+
+      while (nextLink != null || nextLink != "") {
+        console.log(nextLink);
+        await page.goto(nextLink, { waitUntil: "networkidle2" });
+
+        // Wait for the course elements to appear on the page
+        await page.waitForFunction(() => {
+          const nextButton = document.querySelector('[class*="pagination-module--next"]') as HTMLAnchorElement;
+          const courseElements = document.querySelectorAll('[class*="popper-module--popper"]');
+            
+          // If the ‘next page’ button is not present on the page, it returns ‘false’ to continue waiting.
+          if (!nextButton || !courseElements) return false;
+    
+          // Checks if the ‘previousSibling’ of the ‘next page’ button is different from ‘null’ and ‘undefined’.
+          // If it is different, it means that the required element has been loaded, and then returns ‘true’, 
+          // causing `waitForFunction` to stop waiting.
+          return nextButton.previousSibling !== null && nextButton.previousSibling !== undefined;
+        }, { timeout: 1000000 });
+        
+
+        // Scraping course data
+        let { courseData, nextLink_ } = await page.evaluate(( category:Category) => {
+          //const courseElements = document.querySelectorAll('.popper-module--popper--mM5Ie');
+          const courseElements = document.querySelectorAll('[class*="popper-module--popper"]');
+          const courseData: any[] = [];
+          
+          for (const courseElement of Array.from(courseElements)) {
+
+
+            if (courseElement.closest('[class*="carousel-module--container"]')) {
+              continue; // Skip the loop if it's inside a tab-container or carousel
+            }
+
+            //get title
+            const titleElement = courseElement.querySelector('h3[data-purpose="course-title-url"] a');
+            if (titleElement == undefined) continue;
+            const title = titleElement ? titleElement.childNodes[0].textContent?.trim() : null;
+            const link = titleElement  ? `https://www.udemy.com${titleElement.getAttribute("href")}` : null;
+
+
+            //get description
+            const descriptionElement = courseElement.querySelector('[class*="course-card-module--course-headline"]');
+            const description = descriptionElement?.textContent?.trim();
+
+            //get rating
+            const ratingWrapper = courseElement.querySelector('[class*="star-rating-module"] [data-purpose="rating-number"]');
+            const rating = ratingWrapper ? parseFloat(ratingWrapper.textContent || "0"): 0;
+
+            //get max possible rating
+            const ratingMaxwrapper = courseElement.querySelector('[class*="star-rating-module"] [class*="ud-sr-only"]');
+            let ratingMax = 0;
+            if (ratingMaxwrapper) {
+              const ratingMaxText = ratingMaxwrapper.textContent?.trim(); // Get the text and remove extra spaces
+
+              if (ratingMaxText) {
+                const lastNumber = ratingMaxText.match(/\d+$/); // Extracts the last number from the string
+
+                if (lastNumber) {
+                  ratingMax = parseInt(lastNumber[0]); // Show the last number found
+                }
+              }
+            }
+
+            //get price
+            const priceElement = courseElement.querySelector('[data-purpose*="course-price-text"]')?.childNodes[1].childNodes[0];
+            const priceInfo = priceElement? priceElement.textContent?.trim(): null;
+            let price = 0;
+            let currency = "";
+            if (priceInfo) {
+              // Regular expression to capture the numeric value and currency
+              const match = priceInfo.match(/([^\d.,]+)?([\d.,]+)/);
+              if (match) {
+                currency = match[1]?.trim() || "";  // The currency symbol
+                price = parseFloat(match[2].replace(",", ".")); // The numeric value
+              }
+            }
+
+            //get authors
+            const authorsElement = courseElement.querySelector('[class*="course-card-instructors-module--instructor-list"]');
+            const authors = authorsElement?.textContent?.trim();
+
+            //number reviews
+            const numberReviewsElement = courseElement.querySelector('[class*="course-card-ratings-module--reviews-text"]');
+            const numberReviewsInfo =numberReviewsElement?.textContent?.trim();
+            let numberReviews = 0;
+
+            if (numberReviewsInfo) {
+              const match = numberReviewsInfo.match(/([\d.,]+)/);
+              if (match) {
+                numberReviews = parseFloat(match[1].replace(/,/g, ''));
+              }
+            }
+
+            //card details= total hours, classes, levels
+            const cardInfoElement = courseElement.querySelector('[data-purpose*="course-meta-info"]');
+            const totalHoursText = cardInfoElement?.childNodes[0]?.textContent?.trim();
+            let totalHours =0;
+
+            if (totalHoursText) {
+              const match = totalHoursText.match(/([\d.,]+)/);
+              if (match) {
+                totalHours = parseFloat(match[1]);
+              }
+            }
+
+            //number of classes
+            const classesText = cardInfoElement?.childNodes[1]?.textContent?.trim();
+            let classes = 0;
+
+            if (classesText) {
+              const match = classesText.match(/([\d.,]+)/);
+              if (match) {
+                classes = parseFloat(match[1]);
+              }
+            }
+
+
+            const level = cardInfoElement?.childNodes[2]?.textContent?.trim();
+
+            courseData.push({
+              title,
+              link,
+              rating,
+              ratingMax,
+              price: price || "Free",
+              currency,
+              description,
+              authors,
+              numberReviews,
+              totalHours,
+              classes,
+              level,
+              categoryName: category.name
+            });
+          }
+
+          const buttonNextPage = document.querySelector('[class*="pagination-module--next"]') as HTMLAnchorElement;
+          let nextLink_ = "";
+          
+        // const lastPageNumber = buttonNextPage.previousSibling;//get max number
+      
+          if (buttonNextPage) {
+            console.log(buttonNextPage.href as string);
+            nextLink_ = buttonNextPage.href as string;
+          }
+          else {
+            return { courseData:[], nextLink_:"none" };
+          }
+        //  console.log(courseData);
+          return { courseData, nextLink_ };
+        }, category);
+
+        if(nextLink_!="none"){//dont update if we fail to retrieve the data
+          nextLink = nextLink_;
+          scrapedData.push(...courseData);
+        }
+
+      console.log(scrapedData)
+
+      }
+    }
+    return scrapedData;
+    
+  } catch (error) {
+      console.log(error)
+      return [];
+  }
+
+}
+
+
+
+
+//get the maximum number of pages for all categories, dont need this anymore
+async function getMaxpagesCategories(page:Page, categories:Category[]): Promise<Category[]>{
+  try {
+
+    //loop throu all categories
+    let nextLink="";
+    for(let category of categories){
+
+      nextLink = category.url;
+
+      await page.goto(nextLink, { waitUntil: "networkidle2" });
+
+      await page.waitForFunction(() => {
+        const nextButton = document.querySelector('[class*="pagination-module--next"]') as HTMLAnchorElement;
+          
+        if (!nextButton) return false;
+
+        return nextButton.previousSibling !== null && nextButton.previousSibling !== undefined;
+      }, { timeout: 1000000 });
+      
+      const lastPageNumeber = await page.evaluate(() => {
+          
+        //get next page button
+        const buttonNextPage = document.querySelector('[class*="pagination-module--next"]') as HTMLAnchorElement;
+        //get max paeg number
+        const lastPageNumberElement = buttonNextPage?.previousSibling;//get max number
+        if(lastPageNumberElement==null){
+          debugger
+        }
+        const lastPageNumber = lastPageNumberElement?.textContent as unknown as string;
+        return  parseFloat(lastPageNumber);
+
+        });
+        category.maxPage=lastPageNumeber;
+    }
+    
+    return categories;
+  } catch (error) {
+    debugger
+    console.log(error);
+    return [];
+  }
+  
 }
