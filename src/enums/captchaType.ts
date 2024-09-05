@@ -1,4 +1,3 @@
-// Definindo o enum
 export enum CaptchaType {
     None = 'None',
     Selecting = 'Selecting',

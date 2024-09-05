@@ -1,17 +1,22 @@
 import puppeteer from "puppeteer-extra";
 import { Course } from "../types/course";
-import { logger } from "../utils/logger";
+import { logAsync, logger, loggerTXT } from "../utils/logger";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import {  CaptchaType } from "../enums/captchaType";
 import { Udemy } from "../types/udemy";
 import { Page } from "puppeteer";
 import { Category } from "../types/category";
+import * as fs from 'fs';
+import { TypeCourse } from "../enums/typeCourse";
+
+const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 // scrapping udemy
-export async function scrapeUdemyCourses( searchTerm: string ): Promise<Course[]> {
+export async function scrapeUdemyCoursesFrontPage(): Promise<Course[]> {
 
-  logger.info(`Iniciando scraping para Udemy com o termo: ${searchTerm}`);
-  let scrapedData: any[] = [];
+ // logger.info(`Starting scraping for Udemy with the term: ${searchTerm}`);
+  let scrapedData: Course[] = [];
   let captchaType_ :CaptchaType = CaptchaType.None;
   let udemy : Udemy ={
     responseStatus:0,
@@ -20,9 +25,6 @@ export async function scrapeUdemyCourses( searchTerm: string ): Promise<Course[]
   };
 
   let isCaptchaFailed: boolean = true;
-
-  const delay = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
 
   puppeteer.use(StealthPlugin());
 
@@ -41,9 +43,7 @@ export async function scrapeUdemyCourses( searchTerm: string ): Promise<Course[]
 
   const page = await browser.newPage();
   const courses: Course[] = [];
-  if (!searchTerm) {
-    throw new Error("searchTerm is undefined or empty");
-  }
+ 
   while (scrapedData?.length <= 1 || scrapedData == null) {
     try {
       //Set HTTP headers to simulate a real browser
@@ -78,71 +78,46 @@ export async function scrapeUdemyCourses( searchTerm: string ): Promise<Course[]
       })
       captchaType_ = captchaType as CaptchaType;
 
-      //get type response
-      page.on("response", (response) => {
 
-        if (!response.ok()) {
-         // console.error( `Response failed: ${response.url()} - ${response.status()} - ${response.statusText()}` ); 
-          udemy = {
-            responseStatus: response.status(),
-            responseUrl: response.url(),
-            typeCaptcha : captchaType_
-          }
+      //get some logs of htt errors
+      [udemy, isCaptchaFailed] = await getHttpRequestErrors(page,captchaType_,udemy, isCaptchaFailed);
 
-
-        }
-          if (response.ok()) {
-           // console.log( `not failed: ${response.url()} - ${response.status()} - ${response.statusText()}` ); 
-            isCaptchaFailed= false;
-            udemy = {
-              responseStatus: response.status(),
-              responseUrl: response.url(),
-              typeCaptcha : captchaType_
-            }
-          }
-      });
-
-      //always try if captcha fail
-      while(isCaptchaFailed){
-
-        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-        await delay(5000);
-
-
-
-        page.on("response", (response) => {
-          if (!response.ok()) {
-          //  console.error( `Response failed: ${response.url()} - ${response.status()} - ${response.statusText()}` ); 
-            udemy = {
-              responseStatus: response.status(),
-              responseUrl: response.url(),
-              typeCaptcha : captchaType_
-            }
-  
-  
-          }
-            if (response.ok()) {
-              //console.log( `not failed: ${response.url()} - ${response.status()} - ${response.statusText()}` ); 
-              isCaptchaFailed= false; 
-              udemy = {
-                responseStatus: response.status(),
-                responseUrl: response.url(),
-                typeCaptcha : captchaType_
-              }
-            }
-        });
            
-      }
-      
       let categories = await getAllCategories(page);
-      //categories = await getMaxpagesCategories(page, categories);
+      
       scrapedData = await getAllCoursesByCategory(page, categories, scrapedData);
 
-      console.log("ola " + scrapedData.length);
+      console.log("length " + scrapedData.length);
 
-      logger.info(`Scraping completo. ${scrapedData.length} cursos encontrados.`);
+
+      //save scraped data to json to test
+
+      const jsonString = JSON.stringify(scrapedData,null, 2);
+      fs.writeFile('scrapedData.json', jsonString, (err)=>{
+        if (err) {
+          console.log("error writing file "+ err);
+        }
+        else
+        {
+          console.log("scraped data has been saved in scrapedData.json");
+        }
+      });
+
+      //save length for testing
+      const saveLength = JSON.stringify(scrapedData.length, null, 2);
+      fs.writeFile('length.json', saveLength, (err)=>{
+        if (err) {
+          console.log("error writing file "+ err);
+        }
+        else
+        {
+          console.log("scraped data has been saved in scrapedData.json");
+        }
+      });
+      
+      logger.info(`Scraping completed. ${scrapedData.length} courses found.`);
     } catch (error: any) {
-      logger.error(`Erro ao scrapear a Udemy: ${error.message}`);
+      logger.error(`Error scraping Udemy: ${error.message}`);
       logger.error(error)
     } finally {
        await browser.close();
@@ -179,55 +154,93 @@ async function getAllCategories(page:Page):Promise<Category[]> {
 }
 
 // get all categories
-async function getAllCoursesByCategory(page:Page, categories:Category[], scrapedData :any[]): Promise<any[]> {
+async function getAllCoursesByCategory(page:Page, categories:Category[], scrapedData :Course[]): Promise<Course[]> {
 
   
   try {
     let nextLink: string;
+    const typeCourse = TypeCourse.Udemy;
     //loop throu all categories
     for (const category of categories) {
       nextLink = category.url;
       console.log(category.url)
-
-      while (nextLink != null || nextLink != "") {
-        console.log(nextLink);
+      
+      while (nextLink != null && nextLink != "" ) {
+        //console.log(nextLink);
+        debugger
         await page.goto(nextLink, { waitUntil: "networkidle2" });
 
         // Wait for the course elements to appear on the page
         await page.waitForFunction(() => {
+          //let index=0;
           const nextButton = document.querySelector('[class*="pagination-module--next"]') as HTMLAnchorElement;
-          const courseElements = document.querySelectorAll('[class*="popper-module--popper"]');
-            
+          const courseElements = document.querySelectorAll('[class*="course-list--card-layout-container"]');
+          const priceElement = document.querySelectorAll('[class*="course-list--card-layout-container"] [data-purpose*="course-price-text"]');
+
+
           // If the ‘next page’ button is not present on the page, it returns ‘false’ to continue waiting.
-          if (!nextButton || !courseElements) return false;
-    
+          if (courseElements.length != priceElement.length || nextButton == null || courseElements.length ==0 || priceElement.length==0 || nextButton.previousSibling == null || nextButton.previousSibling == undefined ) return false;
+
+          // verify if all prices are available
+          console.log("tamanho course elements "+ courseElements.length)
+          console.log("size "+ priceElement.length )
+         /* for(const priceEl of Array.from(priceElement) ){
+            console.log("inside for "+ (priceEl as HTMLAnchorElement)?.childNodes[1].childNodes[0].textContent?.trim())
+
+            if(priceEl==null){
+              console.log("no price " + priceEl)
+            }
+            
+           
+
+            if (priceEl.closest('[class*="carousel-module--container"]')) {
+              index++;
+              continue; // Skip the loop if it's inside a tab-container or carousel
+            }
+           // console.log("for price " + Array.from(priceElement))
+            ///console.log("primeiro pai" + priceEl)
+
+            if(priceEl?.childNodes[1] == undefined){
+              console.log("price -- "+(priceEl as HTMLAnchorElement)?.childNodes[1].childNodes[0].textContent?.trim())
+            }
+            if( priceEl?.childNodes[1].childNodes[0].textContent==undefined ){
+
+              console.log("price -- "+(priceEl as HTMLAnchorElement)?.childNodes[1].childNodes[0].textContent?.trim())
+             // console.log("é falso o tprice")
+              return false;
+            } 
+          }
+          console.log("indwe "+ index)
+
+          if(priceElement.length == index) return false;*/
+         
+          return true;
           // Checks if the ‘previousSibling’ of the ‘next page’ button is different from ‘null’ and ‘undefined’.
           // If it is different, it means that the required element has been loaded, and then returns ‘true’, 
           // causing `waitForFunction` to stop waiting.
-          return nextButton.previousSibling !== null && nextButton.previousSibling !== undefined;
         }, { timeout: 1000000 });
         
 
         // Scraping course data
-        let { courseData, nextLink_ } = await page.evaluate(( category:Category) => {
+        let { courseData, nextLink_ } = await page.evaluate(( category:Category, typeCourse:TypeCourse) => {
           //const courseElements = document.querySelectorAll('.popper-module--popper--mM5Ie');
-          const courseElements = document.querySelectorAll('[class*="popper-module--popper"]');
-          const courseData: any[] = [];
+          //const courseElements = document.querySelectorAll('[class*="popper-module--popper"]');
+          const courseElements = document.querySelectorAll('[class*="course-list--card-layout-container"]');
+          const courseData: Course[] = [];
           
           for (const courseElement of Array.from(courseElements)) {
 
 
-            if (courseElement.closest('[class*="carousel-module--container"]')) {
+            /*if (courseElement.closest('[class*="carousel-module--container"]')) {
               continue; // Skip the loop if it's inside a tab-container or carousel
-            }
+            }*/
 
             //get title
             const titleElement = courseElement.querySelector('h3[data-purpose="course-title-url"] a');
             if (titleElement == undefined) continue;
             const title = titleElement ? titleElement.childNodes[0].textContent?.trim() : null;
             const link = titleElement  ? `https://www.udemy.com${titleElement.getAttribute("href")}` : null;
-
-
+         
             //get description
             const descriptionElement = courseElement.querySelector('[class*="course-card-module--course-headline"]');
             const description = descriptionElement?.textContent?.trim();
@@ -285,7 +298,7 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
             const cardInfoElement = courseElement.querySelector('[data-purpose*="course-meta-info"]');
             const totalHoursText = cardInfoElement?.childNodes[0]?.textContent?.trim();
             let totalHours =0;
-
+            
             if (totalHoursText) {
               const match = totalHoursText.match(/([\d.,]+)/);
               if (match) {
@@ -308,20 +321,26 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
             const level = cardInfoElement?.childNodes[2]?.textContent?.trim();
 
             courseData.push({
-              title,
-              link,
+              title: title || "",
+              link: link || "",
               rating,
               ratingMax,
-              price: price || "Free",
+              price: price || 0,
               currency,
-              description,
-              authors,
+              description: description|| "",
+              authors: authors || "",
               numberReviews,
               totalHours,
               classes,
-              level,
-              categoryName: category.name
+              level: level || "",
+              categoryName: category.name,
+              typeCourse: typeCourse
             });
+
+            if(courseData[courseData.length-1].price == 0){
+              throw new Error("no price found, need more time to load all rsources" );
+              
+            }
           }
 
           const buttonNextPage = document.querySelector('[class*="pagination-module--next"]') as HTMLAnchorElement;
@@ -330,23 +349,23 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
         // const lastPageNumber = buttonNextPage.previousSibling;//get max number
       
           if (buttonNextPage) {
-            console.log(buttonNextPage.href as string);
+            //console.log(buttonNextPage.href as string);
             nextLink_ = buttonNextPage.href as string;
           }
-          else {
+         /* else {
             return { courseData:[], nextLink_:"none" };
-          }
+          }*/
         //  console.log(courseData);
           return { courseData, nextLink_ };
-        }, category);
+        }, category, typeCourse);
 
-        if(nextLink_!="none"){//dont update if we fail to retrieve the data
-          nextLink = nextLink_;
-          scrapedData.push(...courseData);
-        }
+        
+        nextLink = nextLink_;
+        scrapedData.push(...courseData);
+        console.log(scrapedData)
+        // /console.log(TypeCourse[scrapedData[0].typeCourse])
 
-      console.log(scrapedData)
-
+      //console.log(scrapedData)
       }
     }
     return scrapedData;
@@ -358,6 +377,56 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
 
 }
 
+//get http request errors, to see if I have to deal if captcha
+async function getHttpRequestErrors(page:Page, captchaType_:CaptchaType, udemy:Udemy, isCaptchaFailed:boolean):Promise<[Udemy, boolean]> {
+  //get type response
+  page.on("response", (response) => {
+    if (!response.ok()) {
+      // console.error( `Response failed: ${response.url()} - ${response.status()} - ${response.statusText()}` );
+      udemy = {
+        responseStatus: response.status(),
+        responseUrl: response.url(),
+        typeCaptcha: captchaType_,
+      };
+    }
+    if (response.ok()) {
+      // console.log( `not failed: ${response.url()} - ${response.status()} - ${response.statusText()}` );
+      isCaptchaFailed = false;
+      udemy = {
+        responseStatus: response.status(),
+        responseUrl: response.url(),
+        typeCaptcha: captchaType_,
+      };
+    }
+  });
+
+  //always try if captcha fail
+  while (isCaptchaFailed) {
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await delay(5000);
+
+    page.on("response", (response) => {
+      if (!response.ok()) {
+        //  console.error( `Response failed: ${response.url()} - ${response.status()} - ${response.statusText()}` );
+        udemy = {
+          responseStatus: response.status(),
+          responseUrl: response.url(),
+          typeCaptcha: captchaType_,
+        };
+      }
+      if (response.ok()) {
+        //console.log( `not failed: ${response.url()} - ${response.status()} - ${response.statusText()}` );
+        isCaptchaFailed = false;
+        udemy = {
+          responseStatus: response.status(),
+          responseUrl: response.url(),
+          typeCaptcha: captchaType_,
+        };
+      }
+    });
+  }
+  return [udemy, isCaptchaFailed];
+}
 
 
 
@@ -401,7 +470,7 @@ async function getMaxpagesCategories(page:Page, categories:Category[]): Promise<
   } catch (error) {
     debugger
     console.log(error);
-    return [];
+    throw error;
   }
   
 }

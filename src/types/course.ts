@@ -1,14 +1,18 @@
+import { TypeCourse } from "../enums/typeCourse";
+
 export interface Course {
   title: string;
   link: string;
   rating: number;
-  maxRating: number;
-  price: number;
-  description: string;
+  ratingMax: number;
+  price: number | string;
   currency: string;
+  description: string;
   authors: string;
-  numberReviews: string;
-  totalHours: string;
-  classes: string;
+  numberReviews: number;
+  totalHours: number;
+  classes: number;
   level: string;
+  categoryName: string;
+  typeCourse: TypeCourse;
 }

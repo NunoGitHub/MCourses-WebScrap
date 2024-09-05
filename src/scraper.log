@@ -1,4 +1,39 @@
-2024-09-03T21:34:44.469Z [info]: Iniciando scraping para o termo: "c++"
-2024-09-03T21:34:44.471Z [info]: Iniciando scraping para Udemy com o termo: c++
-2024-09-03T21:35:11.913Z [info]: Scraping completo. 0 cursos encontrados.
-2024-09-03T21:35:12.074Z [error]: Erro ao scrapear a Udemy: Attempted to use detached Frame 'B16A39A8F2CCC2C337BBF7ACCA4EF73D'.
+2024-09-04T14:08:52.296Z [info]: Scraping completed. 0 courses found.
+2024-09-04T14:08:52.502Z [error]: Error scraping Udemy: Attempted to use detached Frame '0D0897F50468DE0878A61411A639ED70'.
+2024-09-04T14:08:58.448Z [error]: Error scraping Udemy: Navigating frame was detached
+2024-09-04T14:08:58.449Z [error]: Navigating frame was detached
+2024-09-04T14:18:58.592Z [info]: Scraping completed. 0 courses found.
+2024-09-04T14:26:25.447Z [info]: Scraping completed. 0 courses found.
+2024-09-04T14:37:49.096Z [info]: Scraping completed. 0 courses found.
+2024-09-04T14:37:53.316Z [error]: Error scraping Udemy: Navigating frame was detached
+2024-09-04T14:37:53.317Z [error]: Navigating frame was detached
+2024-09-04T14:43:24.346Z [info]: Scraping completed. 0 courses found.
+2024-09-04T14:52:54.812Z [info]: Scraping completed. 0 courses found.
+2024-09-04T15:01:57.331Z [info]: Scraping completed. 0 courses found.
+2024-09-04T15:06:13.545Z [info]: Scraping completed. 0 courses found.
+2024-09-04T15:11:02.351Z [info]: Scraping completed. 0 courses found.
+2024-09-04T15:14:09.870Z [info]: Scraping completed. 0 courses found.
+2024-09-04T15:14:13.396Z [error]: Error scraping Udemy: net::ERR_ABORTED at https://www.udemy.com/
+2024-09-04T15:14:13.397Z [error]: net::ERR_ABORTED at https://www.udemy.com/
+2024-09-04T15:14:13.574Z [error]: Error scraping Udemy: Attempted to use detached Frame '8C8EECFF6DB799C9F804C5090FF7BF9D'.
+2024-09-04T15:46:40.778Z [info]: Scraping completed. 0 courses found.
+2024-09-04T21:39:40.821Z [info]: Scraping completed. 0 courses found.
+2024-09-04T21:40:27.923Z [info]: Scraping completed. 0 courses found.
+2024-09-05T12:35:47.582Z [info]: Scraping completed. 0 courses found.
+2024-09-05T12:36:02.129Z [info]: Scraping completed. 0 courses found.
+2024-09-05T12:39:00.781Z [info]: Scraping completed. 0 courses found.
+2024-09-05T12:39:21.181Z [info]: Scraping completed. 0 courses found.
+2024-09-05T12:40:31.100Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:02:19.384Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:02:36.660Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:02:53.130Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:03:24.902Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:03:40.930Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:03:58.846Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:05:17.603Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:06:20.666Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:08:23.346Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:08:27.628Z [error]: Error scraping Udemy: Navigating frame was detached
+2024-09-05T13:08:27.629Z [error]: Navigating frame was detached
+2024-09-05T13:08:59.564Z [info]: Scraping completed. 0 courses found.
+2024-09-05T13:09:16.363Z [info]: Scraping completed. 0 courses found.

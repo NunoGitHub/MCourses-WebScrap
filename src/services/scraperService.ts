@@ -1,14 +1,16 @@
-import { scrapeUdemyCourses } from '../scrapers/udemyScrapper';
+import { scrapeUdemyCoursesFrontPage } from '../scrapers/udemyScraper';
 import { Course } from '../types/course';
 
 export class ScraperService {
-  async scrapeCourses(searchTerm: string): Promise<Course[]> {
-    // Atualmente, apenas o scraper da Udemy está sendo chamado
-    const udemyCourses = await scrapeUdemyCourses(searchTerm);
-    
-    // Aqui, você pode adicionar mais scrapers de outras plataformas
-    // const anotherPlatformCourses = await scrapeAnotherPlatformCourses(searchTerm);
-
-    return udemyCourses; // Combine todos os cursos de diferentes plataformas
+  
+  async scrapeCourses(): Promise<Course[]> {
+    try {
+      //get all courses, info front page udemy
+    const udemyCourses = await scrapeUdemyCoursesFrontPage();
+    return udemyCourses; 
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 }

@@ -1,7 +1,7 @@
-export interface ScrappedData{
+export interface ScrapedData{
     title:string,
     link:string,
-    rating:string,
+    rating:number,
     ratingMax:number,
     price:number|string,
     currency:string,
@@ -9,7 +9,7 @@ export interface ScrappedData{
     authors:string,
     numberReviews:number,
     totalHours:number,
-    classes:string,
+    classes:number,
     level:string,
     categoryName:string
 }

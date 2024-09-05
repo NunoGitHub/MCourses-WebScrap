@@ -5,12 +5,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const scraperService = new ScraperService();
-const searchTerm = 'c++';  // Exemplo de termo de busca
+//const searchTerm = 'c++';  // search
 
 async function main() {
-  logger.info(`Iniciando scraping para o termo: "${searchTerm}"`);
-  const courses = await scraperService.scrapeCourses(searchTerm);
-  console.log(courses);
+  try {
+    const courses = await scraperService.scrapeCourses();
+  } catch (error) {
+    //logger.info(error);
+    console.log(error);
+  }
 }
 
 main();
