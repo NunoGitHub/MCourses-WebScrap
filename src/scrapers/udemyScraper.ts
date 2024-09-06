@@ -9,6 +9,8 @@ import { Category } from "../types/category";
 import * as fs from 'fs';
 import { TypeCourse } from "../enums/typeCourse";
 
+import * as homepageModule from  "../models/homepage"
+
 const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -83,9 +85,14 @@ export async function scrapeUdemyCoursesFrontPage(): Promise<Course[]> {
       [udemy, isCaptchaFailed] = await getHttpRequestErrors(page,captchaType_,udemy, isCaptchaFailed);
 
            
-      let categories = await getAllCategories(page);
+      const categories = await getAllCategories(page);
+      
+      const insertCategories= await homepageModule.insertCategoriesCourses(categories)
+      
       
       scrapedData = await getAllCoursesByCategory(page, categories, scrapedData);
+
+      const insertCourses = await homepageModule.insertCourses(scrapedData);
 
       console.log("length " + scrapedData.length);
 
@@ -160,14 +167,14 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
   try {
     let nextLink: string;
     const typeCourse = TypeCourse.Udemy;
+   // let i=0;
     //loop throu all categories
     for (const category of categories) {
       nextLink = category.url;
       console.log(category.url)
       
-      while (nextLink != null && nextLink != "" ) {
+      while (nextLink != null && nextLink != ""  && i<=1) {
         //console.log(nextLink);
-        debugger
         await page.goto(nextLink, { waitUntil: "networkidle2" });
 
         // Wait for the course elements to appear on the page
@@ -184,35 +191,6 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
           // verify if all prices are available
           console.log("tamanho course elements "+ courseElements.length)
           console.log("size "+ priceElement.length )
-         /* for(const priceEl of Array.from(priceElement) ){
-            console.log("inside for "+ (priceEl as HTMLAnchorElement)?.childNodes[1].childNodes[0].textContent?.trim())
-
-            if(priceEl==null){
-              console.log("no price " + priceEl)
-            }
-            
-           
-
-            if (priceEl.closest('[class*="carousel-module--container"]')) {
-              index++;
-              continue; // Skip the loop if it's inside a tab-container or carousel
-            }
-           // console.log("for price " + Array.from(priceElement))
-            ///console.log("primeiro pai" + priceEl)
-
-            if(priceEl?.childNodes[1] == undefined){
-              console.log("price -- "+(priceEl as HTMLAnchorElement)?.childNodes[1].childNodes[0].textContent?.trim())
-            }
-            if( priceEl?.childNodes[1].childNodes[0].textContent==undefined ){
-
-              console.log("price -- "+(priceEl as HTMLAnchorElement)?.childNodes[1].childNodes[0].textContent?.trim())
-             // console.log("é falso o tprice")
-              return false;
-            } 
-          }
-          console.log("indwe "+ index)
-
-          if(priceElement.length == index) return false;*/
          
           return true;
           // Checks if the ‘previousSibling’ of the ‘next page’ button is different from ‘null’ and ‘undefined’.
@@ -345,17 +323,12 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
 
           const buttonNextPage = document.querySelector('[class*="pagination-module--next"]') as HTMLAnchorElement;
           let nextLink_ = "";
-          
-        // const lastPageNumber = buttonNextPage.previousSibling;//get max number
       
           if (buttonNextPage) {
             //console.log(buttonNextPage.href as string);
             nextLink_ = buttonNextPage.href as string;
           }
-         /* else {
-            return { courseData:[], nextLink_:"none" };
-          }*/
-        //  console.log(courseData);
+
           return { courseData, nextLink_ };
         }, category, typeCourse);
 
@@ -363,9 +336,7 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
         nextLink = nextLink_;
         scrapedData.push(...courseData);
         console.log(scrapedData)
-        // /console.log(TypeCourse[scrapedData[0].typeCourse])
-
-      //console.log(scrapedData)
+        //i++;
       }
     }
     return scrapedData;

@@ -5,7 +5,7 @@ export interface Course {
   link: string;
   rating: number;
   ratingMax: number;
-  price: number | string;
+  price: number;
   currency: string;
   description: string;
   authors: string;

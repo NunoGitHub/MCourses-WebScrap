@@ -37,3 +37,56 @@
 2024-09-05T13:08:27.629Z [error]: Navigating frame was detached
 2024-09-05T13:08:59.564Z [info]: Scraping completed. 0 courses found.
 2024-09-05T13:09:16.363Z [info]: Scraping completed. 0 courses found.
+2024-09-06T10:42:32.479Z [error]: Error scraping Udemy: categories.map is not a function
+2024-09-06T10:42:32.480Z [error]: categories.map is not a function
+2024-09-06T10:42:32.679Z [error]: Error scraping Udemy: Attempted to use detached Frame '272BAE393E5B338076F0A28B39868A91'.
+2024-09-06T10:43:34.031Z [error]: Error scraping Udemy: at or near "?": syntax error
+2024-09-06T10:43:34.033Z [error]: at or near "?": syntax error
+2024-09-06T10:43:34.228Z [error]: Error scraping Udemy: Attempted to use detached Frame '8AC819EECFC81358CB15936529F14967'.
+2024-09-06T10:53:27.985Z [error]: Error scraping Udemy: at or near "?": syntax error
+2024-09-06T10:53:27.987Z [error]: at or near "?": syntax error
+2024-09-06T12:42:50.266Z [error]: Error scraping Udemy: there is no unique or exclusion constraint matching the ON CONFLICT specification
+2024-09-06T12:42:50.268Z [error]: there is no unique or exclusion constraint matching the ON CONFLICT specification
+2024-09-06T12:42:53.933Z [error]: Error scraping Udemy: Protocol error (Page.navigate): Session closed. Most likely the page has been closed.
+2024-09-06T12:48:47.339Z [error]: Error scraping Udemy: there is no unique or exclusion constraint matching the ON CONFLICT specification
+2024-09-06T12:48:47.341Z [error]: there is no unique or exclusion constraint matching the ON CONFLICT specification
+2024-09-06T12:48:47.586Z [error]: Error scraping Udemy: Attempted to use detached Frame '38071C430513C9EF665686DF50ADAE65'.
+2024-09-06T12:50:42.448Z [error]: Error scraping Udemy: there is no unique or exclusion constraint matching the ON CONFLICT specification
+2024-09-06T12:50:42.449Z [error]: there is no unique or exclusion constraint matching the ON CONFLICT specification
+2024-09-06T13:33:33.828Z [error]: Error scraping Udemy: relation "level" does not exist
+2024-09-06T13:33:33.830Z [error]: relation "level" does not exist
+2024-09-06T13:42:20.462Z [error]: Error scraping Udemy: at or near "as": syntax error
+2024-09-06T13:42:20.464Z [error]: at or near "as": syntax error
+2024-09-06T13:44:33.490Z [error]: Error scraping Udemy: at or near "as": syntax error
+2024-09-06T13:44:33.491Z [error]: at or near "as": syntax error
+2024-09-06T13:46:25.204Z [error]: Error scraping Udemy: at or near "as": syntax error
+2024-09-06T13:46:25.206Z [error]: at or near "as": syntax error
+2024-09-06T13:50:37.798Z [error]: Error scraping Udemy: placeholder $1 already has type varchar, cannot assign varchar[]
+2024-09-06T13:51:21.324Z [error]: Error scraping Udemy: placeholder $1 already has type varchar, cannot assign varchar[]
+2024-09-06T13:51:21.325Z [error]: placeholder $1 already has type varchar, cannot assign varchar[]
+2024-09-06T13:51:50.637Z [error]: Error scraping Udemy: placeholder $1 already has type varchar, cannot assign varchar[]
+2024-09-06T13:51:50.638Z [error]: placeholder $1 already has type varchar, cannot assign varchar[]
+2024-09-06T13:52:44.625Z [error]: Error scraping Udemy: placeholder $1 already has type varchar, cannot assign varchar[]
+2024-09-06T13:52:44.627Z [error]: placeholder $1 already has type varchar, cannot assign varchar[]
+2024-09-06T13:55:31.899Z [error]: Error scraping Udemy: at or near ",": syntax error
+2024-09-06T14:11:56.247Z [info]: Scraping completed. 32 courses found.
+2024-09-06T14:13:14.219Z [info]: Scraping completed. 32 courses found.
+2024-09-06T14:17:01.741Z [info]: Scraping completed. 32 courses found.
+2024-09-06T14:27:58.086Z [error]: Error scraping Udemy: placeholder $1 already has type varchar, cannot assign varchar[]
+2024-09-06T14:50:54.591Z [info]: Scraping completed. 32 courses found.
+2024-09-06T14:54:25.830Z [error]: Error scraping Udemy: placeholder $1 already has type varchar, cannot assign varchar[]
+2024-09-06T14:57:47.739Z [error]: Error scraping Udemy: bind message supplies 1 parameters, but requires 33
+2024-09-06T14:57:47.740Z [error]: bind message supplies 1 parameters, but requires 33
+2024-09-06T15:22:58.983Z [error]: Error scraping Udemy: wrong number of format codes specified: 32 for 0 arguments
+2024-09-06T15:32:40.279Z [error]: Error scraping Udemy: column "levels" does not exist
+2024-09-06T15:38:15.396Z [error]: Error scraping Udemy: could not determine data type of placeholder $1
+2024-09-06T15:38:59.617Z [error]: Error scraping Udemy: could not determine data type of placeholder $1
+2024-09-06T15:38:59.618Z [error]: could not determine data type of placeholder $1
+2024-09-06T15:50:48.504Z [info]: Scraping completed. 32 courses found.
+2024-09-06T16:18:46.733Z [info]: Scraping completed. 32 courses found.
+2024-09-06T16:18:52.205Z [error]: Error scraping Udemy: Navigating frame was detached
+2024-09-06T16:18:52.214Z [error]: Navigating frame was detached
+2024-09-06T16:20:15.225Z [info]: Scraping completed. 32 courses found.
+2024-09-06T16:20:37.442Z [info]: Scraping completed. 32 courses found.
+2024-09-06T16:21:22.985Z [info]: Scraping completed. 32 courses found.
+2024-09-06T16:21:31.503Z [error]: Error scraping Udemy: Attempted to use detached Frame '8D146620882223628C89DDDFCCD23273'.
