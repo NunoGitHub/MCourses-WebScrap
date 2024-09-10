@@ -90,3 +90,118 @@
 2024-09-06T16:20:37.442Z [info]: Scraping completed. 32 courses found.
 2024-09-06T16:21:22.985Z [info]: Scraping completed. 32 courses found.
 2024-09-06T16:21:31.503Z [error]: Error scraping Udemy: Attempted to use detached Frame '8D146620882223628C89DDDFCCD23273'.
+2024-09-08T09:31:00.730Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T09:31:00.732Z [error]: at or near "on": syntax error
+2024-09-08T09:31:00.922Z [error]: Error scraping Udemy: Attempted to use detached Frame 'AC429F500A66A17CD5CA56501D4038E2'.
+2024-09-08T09:31:19.959Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T09:31:19.961Z [error]: at or near "on": syntax error
+2024-09-08T09:31:20.160Z [error]: Error scraping Udemy: Attempted to use detached Frame '4B875E6A28E5039A1B402B9A76A6B37B'.
+2024-09-08T09:32:05.433Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T09:32:05.435Z [error]: at or near "on": syntax error
+2024-09-08T09:32:05.631Z [error]: Error scraping Udemy: Attempted to use detached Frame '0C1C1A9069F7AA6AAECFBBFC45C835C2'.
+2024-09-08T09:33:40.642Z [error]: Error scraping Udemy: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T09:33:40.644Z [error]: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T09:33:40.945Z [error]: Error scraping Udemy: Protocol error (Page.navigate): Session closed. Most likely the page has been closed.
+2024-09-08T09:34:57.957Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T09:34:57.959Z [error]: at or near "on": syntax error
+2024-09-08T09:35:04.846Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T09:35:04.846Z [error]: at or near "on": syntax error
+2024-09-08T09:35:10.971Z [error]: Error scraping Udemy: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T09:35:10.972Z [error]: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T09:35:15.829Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T09:35:15.830Z [error]: at or near "on": syntax error
+2024-09-08T09:35:54.257Z [error]: Error scraping Udemy: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T09:35:54.258Z [error]: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T09:36:01.374Z [error]: Error scraping Udemy: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T09:36:01.375Z [error]: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T09:36:03.215Z [error]: Error scraping Udemy: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T09:36:03.216Z [error]: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T09:38:36.495Z [error]: Error scraping Udemy: Protocol error (Runtime.callFunctionOn): Target closed
+2024-09-08T09:50:04.428Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T09:50:04.430Z [error]: at or near "on": syntax error
+2024-09-08T09:50:04.643Z [error]: Error scraping Udemy: Attempted to use detached Frame '1F2DBFF334645A4F091BC3640F5DE73A'.
+2024-09-08T09:50:36.011Z [error]: Error scraping Udemy: captchaType_1 is not defined
+2024-09-08T09:50:36.012Z [error]: captchaType_1 is not defined
+2024-09-08T09:50:36.175Z [error]: Error scraping Udemy: Attempted to use detached Frame '967A503FDEA4EEE0872BCF4BD5F89A1E'.
+2024-09-08T09:51:37.912Z [error]: Error scraping Udemy: captchaType_1 is not defined
+2024-09-08T09:51:37.914Z [error]: captchaType_1 is not defined
+2024-09-08T09:51:38.092Z [error]: Error scraping Udemy: Attempted to use detached Frame 'EBC50E2F3E93E76250C98621A45F7BE3'.
+2024-09-08T09:53:14.086Z [error]: Error scraping Udemy: Protocol error (Runtime.callFunctionOn): Promise was collected
+2024-09-08T09:53:14.089Z [error]: Protocol error (Runtime.callFunctionOn): Promise was collected
+2024-09-08T09:53:14.267Z [error]: Error scraping Udemy: Attempted to use detached Frame '9A6FB80E96AE2CC3CCC2B39C58DA55EA'.
+2024-09-08T10:03:24.508Z [error]: Error scraping Udemy: Protocol error (Runtime.callFunctionOn): Promise was collected
+2024-09-08T10:03:24.510Z [error]: Protocol error (Runtime.callFunctionOn): Promise was collected
+2024-09-08T10:03:24.702Z [error]: Error scraping Udemy: Attempted to use detached Frame '30397A723A9CE1ACA632DA1D7ABA59F1'.
+2024-09-08T10:10:58.072Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T10:10:58.074Z [error]: at or near "on": syntax error
+2024-09-08T10:10:58.264Z [error]: Error scraping Udemy: Attempted to use detached Frame 'F4406F918F874BDFE40720DB1C920222'.
+2024-09-08T10:12:54.045Z [error]: Error scraping Udemy: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T10:12:54.046Z [error]: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T10:12:54.189Z [error]: Error scraping Udemy: Protocol error (Page.navigate): Session closed. Most likely the page has been closed.
+2024-09-08T10:13:27.466Z [error]: Error scraping Udemy: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T10:13:27.468Z [error]: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T10:13:27.624Z [error]: Error scraping Udemy: Attempted to use detached Frame 'DB6708638C61B25FC9C40251ACF777AF'.
+2024-09-08T10:13:58.788Z [error]: Error scraping Udemy: Execution context was destroyed
+2024-09-08T10:52:34.444Z [error]: Error scraping Udemy: ENOENT: no such file or directory, open 'C:\Users\nunoa\Desktop\trabalhos\Courses\MCourses\WebScrap\captcha\image\turnstile.png'
+2024-09-08T10:54:02.893Z [error]: Error scraping Udemy: ENOENT: no such file or directory, open 'C:\captcha\image\turnstile.png'
+2024-09-08T10:54:02.895Z [error]: ENOENT: no such file or directory, open 'C:\captcha\image\turnstile.png'
+2024-09-08T10:54:17.971Z [error]: Error scraping Udemy: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T10:54:17.972Z [error]: Execution context was destroyed, most likely because of a navigation.
+2024-09-08T10:55:09.781Z [error]: Error scraping Udemy: ENOENT: no such file or directory, open 'C:\Users\nunoa\Desktop\trabalhos\Courses\MCourses\WebScrap\src\src\captcha\image\turnstile.png'
+2024-09-08T10:57:21.349Z [error]: Error scraping Udemy: ENOENT: no such file or directory, open 'C:\Users\nunoa\Desktop\trabalhos\Courses\MCourses\WebScrap\captcha\image\turnstile.png'
+2024-09-08T10:57:21.351Z [error]: ENOENT: no such file or directory, open 'C:\Users\nunoa\Desktop\trabalhos\Courses\MCourses\WebScrap\captcha\image\turnstile.png'
+2024-09-08T11:02:25.168Z [error]: Error scraping Udemy: undefined
+2024-09-08T11:02:25.170Z [error]: Error saving archive json 2
+2024-09-08T11:02:27.225Z [error]: Error scraping Udemy: Protocol error (Network.setExtraHTTPHeaders): Target closed
+2024-09-08T11:02:27.226Z [error]: Protocol error (Network.setExtraHTTPHeaders): Target closed
+2024-09-08T11:04:59.048Z [error]: Error scraping Udemy: undefined
+2024-09-08T11:04:59.049Z [error]: Error saving archive json 2
+2024-09-08T11:04:59.062Z [error]: Error scraping Udemy: Protocol error (Network.setExtraHTTPHeaders): Target closed
+2024-09-08T11:04:59.062Z [error]: Protocol error (Network.setExtraHTTPHeaders): Target closed
+2024-09-08T11:14:54.855Z [error]: Error scraping Udemy: undefined
+2024-09-08T11:14:54.856Z [error]: Error saving archive json 2
+2024-09-08T11:15:16.225Z [error]: Error scraping Udemy: undefined
+2024-09-08T11:15:16.225Z [error]: Error saving archive json 2
+2024-09-08T11:16:28.164Z [error]: Error scraping Udemy: undefined
+2024-09-08T11:16:28.165Z [error]: Error saving archive json 2
+2024-09-08T11:25:07.936Z [error]: Error scraping Udemy: Cannot find module 'robotjs'
+Require stack:
+- C:\Users\nunoa\Desktop\trabalhos\Courses\MCourses\WebScrap\src\scrapers\udemyScraper.ts
+- C:\Users\nunoa\Desktop\trabalhos\Courses\MCourses\WebScrap\src\services\scraperService.ts
+- C:\Users\nunoa\Desktop\trabalhos\Courses\MCourses\WebScrap\src\index.ts
+2024-09-08T11:25:07.937Z [error]: Cannot find module 'robotjs'
+Require stack:
+- C:\Users\nunoa\Desktop\trabalhos\Courses\MCourses\WebScrap\src\scrapers\udemyScraper.ts
+- C:\Users\nunoa\Desktop\trabalhos\Courses\MCourses\WebScrap\src\services\scraperService.ts
+- C:\Users\nunoa\Desktop\trabalhos\Courses\MCourses\WebScrap\src\index.ts
+2024-09-08T11:25:12.046Z [error]: Error scraping Udemy: Navigating frame was detached
+2024-09-08T11:35:15.618Z [error]: Error scraping Udemy: Execution context was destroyed
+2024-09-08T13:29:45.984Z [error]: Error scraping Udemy: Navigating frame was detached
+2024-09-08T13:57:54.110Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T13:57:54.111Z [error]: at or near "on": syntax error
+2024-09-08T13:57:57.510Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T13:57:57.510Z [error]: at or near "on": syntax error
+2024-09-08T13:58:02.197Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T13:58:02.197Z [error]: at or near "on": syntax error
+2024-09-08T13:58:06.881Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T13:58:06.882Z [error]: at or near "on": syntax error
+2024-09-08T13:58:10.573Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T13:58:10.574Z [error]: at or near "on": syntax error
+2024-09-08T13:58:14.719Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T13:58:14.720Z [error]: at or near "on": syntax error
+2024-09-08T13:58:19.619Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T13:58:19.620Z [error]: at or near "on": syntax error
+2024-09-08T13:58:22.726Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T13:58:22.726Z [error]: at or near "on": syntax error
+2024-09-08T13:58:28.153Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T13:58:28.153Z [error]: at or near "on": syntax error
+2024-09-08T13:58:33.422Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T13:58:33.422Z [error]: at or near "on": syntax error
+2024-09-08T14:33:15.342Z [error]: Error scraping Udemy: Navigating frame was detached
+2024-09-08T14:39:00.868Z [error]: Error scraping Udemy: Cannot read properties of null (reading 'scrollHeight')
+2024-09-08T14:39:00.870Z [error]: Cannot read properties of null (reading 'scrollHeight')
+2024-09-08T16:35:33.936Z [error]: Error scraping Udemy: at or near "on": syntax error
+2024-09-08T16:35:33.938Z [error]: at or near "on": syntax error
+2024-09-08T16:46:16.739Z [error]: Error scraping Udemy: Navigating frame was detached
+2024-09-08T16:48:27.589Z [error]: Error scraping Udemy: Navigating frame was detached
+2024-09-08T16:49:11.248Z [error]: Error scraping Udemy: Navigating frame was detached

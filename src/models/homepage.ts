@@ -36,6 +36,7 @@ export async function insertCourses(categories:Course[]) {
         const categoriesLevels = categories.map((cat)=> cat.level);
         const levelId = await homepageHelper.insertIdLevels(categoriesLevels);
         const getLevelsId= await homepageHelper.getIdLevels(categoriesLevels); 
+        
         return getLevelsId;
         
     } catch (error) {

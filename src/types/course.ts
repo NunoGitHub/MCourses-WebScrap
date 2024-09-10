@@ -15,4 +15,5 @@ export interface Course {
   level: string;
   categoryName: string;
   typeCourse: TypeCourse;
+  imageLink:string;
 }

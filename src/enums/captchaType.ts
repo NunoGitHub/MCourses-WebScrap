@@ -1,4 +1,5 @@
 export enum CaptchaType {
+    Undefined= 'undefined',
     None = 'None',
     Selecting = 'Selecting',
     TextCaptcha = 'TextCaptcha',

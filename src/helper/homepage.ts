@@ -1,4 +1,5 @@
 import  db  from "../database/cockroachConnector";
+import { TypeCourse } from "../enums/typeCourse";
 import { Course } from "../types/course";
 const axios = require("axios");
 
@@ -76,9 +77,9 @@ exports.insertIdLevels = async function (levels:any[]) {
             return resolve(result);
         });
     });
-
     return levelid;
 }
+
 
 
 //if dont exist insert new level
@@ -117,6 +118,28 @@ exports.getIdLevels = async function (levels:any[]) {
  }
  
 
+//insert type_course
+exports.insertTypeCourse = async function (typeCourse:TypeCourse[]) {
+ 
+     let createDynamicInsertion = typeCourse.map((_, i) => `($${i + 1})`).join(', ');
+ 
+     const getOrInsertQuery = `
+         INSERT INTO type_courses (name)
+         VALUES ${createDynamicInsertion}
+         ON CONFLICT (name) DO NOTHING;
+     
+     `;
+         const insertTypeCourse = await new Promise((resolve, reject) => {
+         db.query(getOrInsertQuery, typeCourse, (err, result) => {
+             if (err) {
+                 return reject(err);
+             }
+             return resolve(result);
+         });
+     });
+ 
+     return insertTypeCourse;
+ }
 
 
 

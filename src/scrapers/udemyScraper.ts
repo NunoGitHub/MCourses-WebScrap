@@ -4,12 +4,16 @@ import { logAsync, logger, loggerTXT } from "../utils/logger";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import {  CaptchaType } from "../enums/captchaType";
 import { Udemy } from "../types/udemy";
-import { Page } from "puppeteer";
+import { Browser, Page } from "puppeteer";
 import { Category } from "../types/category";
 import * as fs from 'fs';
 import { TypeCourse } from "../enums/typeCourse";
-
 import * as homepageModule from  "../models/homepage"
+import path from 'path';
+import { spawn, exec,spawnSync  } from 'child_process';
+const robot = require('robotjs');
+const { readFile } = require('fs/promises');
+
 
 const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -19,11 +23,11 @@ export async function scrapeUdemyCoursesFrontPage(): Promise<Course[]> {
 
  // logger.info(`Starting scraping for Udemy with the term: ${searchTerm}`);
   let scrapedData: Course[] = [];
-  let captchaType_ :CaptchaType = CaptchaType.None;
+  let captchaType_ :CaptchaType = CaptchaType.Undefined;
   let udemy : Udemy ={
     responseStatus:0,
     responseUrl:"",
-    typeCaptcha: CaptchaType.None,
+    typeCaptcha: CaptchaType.Undefined,
   };
 
   let isCaptchaFailed: boolean = true;
@@ -39,9 +43,10 @@ export async function scrapeUdemyCoursesFrontPage(): Promise<Course[]> {
       "--disable-web-security",
       "--disable-features=IsolateOrigins,site-per-process",
       "--ignore-certificate-errors",
-      "--window-size=1080,1900",
     ],
   });
+  // "--window-size=1080,1920",
+ 
 
   const page = await browser.newPage();
   const courses: Course[] = [];
@@ -55,11 +60,15 @@ export async function scrapeUdemyCoursesFrontPage(): Promise<Course[]> {
         "Accept-Language": "en-US,en;q=0.9",
       });
 
-      const baseUrl = "https://www.udemy.com";
+      const baseUrl = "";
 
       await page.goto(`${baseUrl}/`, { waitUntil: "networkidle2" });
 
-      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+      await page.setViewport({ width: 1920, height: 1080 });
+      await page.evaluate(() => {
+        window.scrollTo(0, document.body.scrollHeight)
+          document.body.style.zoom = "100%"
+      });
 
       // Simulate human interactions to avoid bot detection
       //Function to wait for a certain time (in milliseconds)
@@ -67,22 +76,56 @@ export async function scrapeUdemyCoursesFrontPage(): Promise<Course[]> {
       await delay(Math.random() * 2000 + 1000); //  Random wait between 1s and 3s // Random wait between 1s and 3s
 
       await page.setCacheEnabled(true);
-
       //get type captcha
 
-      const captchaType=await page.evaluate(()=>{
-        const cloudfareElement = document.querySelector('[name="cf-turnstile-response"]'); 
-        if(cloudfareElement)
-          return 'CloudflareTurnstile';
+      while (captchaType_ == CaptchaType.Undefined /*|| captchaType_ == CaptchaType.CloudflareTurnstile*/) {
 
-        return 'None'
+        const captchaType=await page.evaluate(()=>{
         
-      })
-      captchaType_ = captchaType as CaptchaType;
+          const cloudfareElement = document.querySelector('[name="cf-turnstile-response"]'); 
+          
+          if (!cloudfareElement) return 'None'
+          if(cloudfareElement)
+            return 'CloudflareTurnstile';
 
+          return  'None';
+          
+        })
+        await delay(1000);
+        captchaType_ = captchaType as CaptchaType;
+    }
+    await delay(500);
 
+    page.on("response", (response) => {
+      
+      if (!response.ok()) {
+        console.error( `Response failed: ${response.url()} - ${response.status()} - ${response.statusText()}` );
+        
+        if(response.url().includes("turnstile")){
+          captchaType_= CaptchaType.CloudflareTurnstile;
+          return;
+        }
+          
+        
+      }
+      if (response.ok()) {
+         console.log( `not failed: ${response.url()} - ${response.status()} - ${response.statusText()}` );
+        
+        if(response.url().includes("turnstile")){
+          captchaType_= CaptchaType.CloudflareTurnstile;
+          return;
+        }
+          
+      }
+    });
+
+ 
+    let captcha;
+    if(captchaType_!= CaptchaType.None)
+      captcha= await captchaResolver(page);
+    
       //get some logs of htt errors
-      [udemy, isCaptchaFailed] = await getHttpRequestErrors(page,captchaType_,udemy, isCaptchaFailed);
+      //[udemy, isCaptchaFailed] = await getHttpRequestErrors(page,captchaType_,udemy, isCaptchaFailed);
 
            
       const categories = await getAllCategories(page);
@@ -127,10 +170,10 @@ export async function scrapeUdemyCoursesFrontPage(): Promise<Course[]> {
       logger.error(`Error scraping Udemy: ${error.message}`);
       logger.error(error)
     } finally {
-       await browser.close();
+      // await browser.close();
     }
   }
-  await browser.close();
+  //await browser.close();
   return scrapedData;
 }
 
@@ -166,14 +209,14 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
   
   try {
     let nextLink: string;
-    const typeCourse = TypeCourse.Udemy;
+    const typeCourse = TypeCourse.udemy;
    // let i=0;
     //loop throu all categories
     for (const category of categories) {
       nextLink = category.url;
       console.log(category.url)
       
-      while (nextLink != null && nextLink != ""  && i<=1) {
+      while (nextLink != null && nextLink != ""  /*&& i<=1*/) {
         //console.log(nextLink);
         await page.goto(nextLink, { waitUntil: "networkidle2" });
 
@@ -226,6 +269,12 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
             //get rating
             const ratingWrapper = courseElement.querySelector('[class*="star-rating-module"] [data-purpose="rating-number"]');
             const rating = ratingWrapper ? parseFloat(ratingWrapper.textContent || "0"): 0;
+
+            //get image link
+            const imageLinkElement = courseElement.querySelector('[class*="browse-course-card-module--image"]') as any;
+            const imageLink= imageLinkElement.src;
+
+            debugger
 
             //get max possible rating
             const ratingMaxwrapper = courseElement.querySelector('[class*="star-rating-module"] [class*="ud-sr-only"]');
@@ -312,11 +361,12 @@ async function getAllCoursesByCategory(page:Page, categories:Category[], scraped
               classes,
               level: level || "",
               categoryName: category.name,
-              typeCourse: typeCourse
+              typeCourse: typeCourse,
+              imageLink: imageLink || "",
             });
 
             if(courseData[courseData.length-1].price == 0){
-              throw new Error("no price found, need more time to load all rsources" );
+              throw new Error("no price found, need more time to load all resources" );
               
             }
           }
@@ -399,7 +449,88 @@ async function getHttpRequestErrors(page:Page, captchaType_:CaptchaType, udemy:U
   return [udemy, isCaptchaFailed];
 }
 
+async function captchaResolver(page: Page) {
+  try {
 
+   let outputAux=""
+   let output;
+   let pythonProcess;
+     //call python
+     const imagePath = "turnstile.png";
+     const outputJson = "turnstile.json";
+     const textToSearch="Refresh"
+     const python = "C:\\Users\\nunoa\\Desktop\\trabalhos\\Courses\\MCourses\\WebScrap\\src\\python\\venv\\Scripts\\python.exe";
+     //const scriptPath = "C:\\Users\\nunoa\\Desktop\\trabalhos\\Courses\\MCourses\\WebScrap\\src\\python\\process_captcha.py";
+     const scriptPath = "C:\\Users\\nunoa\\Desktop\\trabalhos\\Courses\\MCourses\\WebScrap\\src\\python\\find_text_img.py";
+ 
+     robot.keyTap('f12');
+    await delay(500);
+
+    robot.keyTap('f11');
+    await delay(2000)
+
+
+    //captcha verifying
+   while (outputAux == "" || outputAux =="verifying") {
+    
+   
+    await page.screenshot({ path: "turnstile.png" });
+
+    pythonProcess = spawnSync(python, [
+      scriptPath,
+      imagePath,
+      textToSearch,
+    ]);
+    
+     // Capturar a saída
+     output = pythonProcess.stdout.toString().trim();
+     console.log(output)
+
+     outputAux = output;
+
+
+     // Checa por erros
+    if (pythonProcess!.error) {
+      throw new Error(
+        `Error initializing Python: ${pythonProcess!.error.message}`
+      );
+    }
+    
+
+    if (pythonProcess!.status !== 0) {
+      throw new Error(
+        `Python process exited with code ${
+          pythonProcess!.status
+        }. stderr: ${pythonProcess!.stderr.toString()}`
+      );
+    }
+   
+    }
+
+    //convert coordenates to string
+    const cleanedString = output!.replace(/[()]/g, '').trim();
+    //convert string coordenates to number
+    let [x, y] = cleanedString.split(',').map(Number);
+    
+    const result = pythonProcess!.stdout?.toString()?.trim();
+    console.log(result);
+    const error = pythonProcess!.stderr?.toString()?.trim();
+    console.log(error);
+    await clickAtCoordinates(x,y, page);
+
+   
+  } catch (error) {
+    console.log("error " + error);
+  }
+}
+
+// Função para realizar o clique na tela nas coordenadas especificadas
+const clickAtCoordinates = async (x: number, y: number, page:Page) => {
+  // Implementação usando a automação visual com bibliotecas como robotjs
+  robot.moveMouse(x, y);
+  robot.mouseClick();
+  //await page.mouse.click(x,y);
+};
 
 //get the maximum number of pages for all categories, dont need this anymore
 async function getMaxpagesCategories(page:Page, categories:Category[]): Promise<Category[]>{
@@ -428,7 +559,6 @@ async function getMaxpagesCategories(page:Page, categories:Category[]): Promise<
         //get max paeg number
         const lastPageNumberElement = buttonNextPage?.previousSibling;//get max number
         if(lastPageNumberElement==null){
-          debugger
         }
         const lastPageNumber = lastPageNumberElement?.textContent as unknown as string;
         return  parseFloat(lastPageNumber);

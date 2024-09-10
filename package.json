@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "start2NoW":"node -r ts-node/register src/index.ts",
     "start": "cd src && nodemon index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,16 +23,17 @@
     "puppeteer": "^23.2.1",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4",
+    "robotjs": "^0.6.0",
     "winston": "^3.14.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
-    "@types/node": "^22.5.1",
+    "@types/node": "^22.5.4",
     "@types/pg": "^8.11.8",
     "@types/puppeteer": "^7.0.4",
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
   }
 }
